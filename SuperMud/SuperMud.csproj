@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{30C7E0B8-8EF0-4703-B33C-22039817B07A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SuperMud</RootNamespace>
+    <AssemblyName>SuperMud</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Game\Game.cs" />
+    <Compile Include="Engine\AEnviroment.cs" />
+    <Compile Include="Engine\IUserInterface.cs" />
+    <Compile Include="Engine\Player.cs" />
+    <Compile Include="Game\World.cs" />
+    <Compile Include="Game\BasicRoom.cs" />
+    <Compile Include="Game\BasicDoor.cs" />
+    <Compile Include="Engine\GameActionAttribute.cs" />
+    <Compile Include="Engine\AItem.cs" />
+    <Compile Include="Engine\GameNameAttribute.cs" />
+    <Compile Include="Engine\IGameObject.cs" />
+    <Compile Include="Engine\IGameObjectExtensionMethods.cs" />
+    <Compile Include="Engine\INamed.cs" />
+    <Compile Include="Engine\GameIdentificationAttribute.cs" />
+    <Compile Include="Engine\GramaticalGender.cs" />
+    <Compile Include="Engine\Description.cs" />
+    <Compile Include="Engine\ExecutableItem.cs" />
+    <Compile Include="Engine\StringExtensionMethod.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Engine\" />
+    <Folder Include="Game\" />
+  </ItemGroup>
+</Project>
