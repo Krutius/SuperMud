@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SuperMud.Engine
 {
-	public class Description : Attribute
+	public class Description
 	{
 		public String Name {
 			get;
@@ -24,9 +24,9 @@ namespace SuperMud.Engine
 		public String FullText {
 			get {
 				if (this.GramaticalGender == GramaticalGender.Female) {
-					return "eine " + String.Join (" ", this.Attributes) + this.Name;
+					return "eine " + String.Join (" ", this.Attributes) + (this.Attributes.Any() ? " " : "") + this.Name;
 				} else {
-					return "ein " + String.Join (" ", this.Attributes) + this.Name;
+					return "ein " + String.Join (" ", this.Attributes) + (this.Attributes.Any() ? " " : "") + this.Name;
 				}
 			}
 		}
@@ -36,10 +36,10 @@ namespace SuperMud.Engine
 			: this(name, gramaticalGender, attributes.ToArray()) {}
 
 		public Description (String name, GramaticalGender gramaticalGender, params String[] attributes) {
-			this.Name = name;
+			this.Name = name.ReplaceSpecialSign();
 			this.GramaticalGender = gramaticalGender;
 			this.Attributes = new List<String> ();
-			this.Attributes.AddRange (attributes);
+			this.Attributes.AddRange (attributes.Select(s => s.ReplaceSpecialSign()));
 		}
 
 		public bool isA(Description compareTo) {

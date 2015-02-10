@@ -109,7 +109,7 @@ namespace SuperMud.Engine
 
 			var targetObjects = this.GetCurrentTargets().Where (obj => executables.Any (e => e.Type.IsInstanceOfType(obj))).ToList();
 
-			String regex = @"^" + command.Substring(0, commandVerb.Length) + " (?<article>die|das|den)(?<adjectives>.*?) (?<noun>[A-Z]{1}[a-z]*?)$";
+			String regex = @"^" + command.Substring(0, commandVerb.Length) + " .*?(?<article>die|das|den)(?<adjectives>.*?) (?<noun>[A-Z]{1}[a-z]*?)$";
 			var match = System.Text.RegularExpressions.Regex.Match (command, regex);
 
 			if (!match.Success) {
@@ -149,7 +149,7 @@ namespace SuperMud.Engine
 				int idx = 0;
 				do {
 					int.TryParse(this.Ask(), out idx);
-				} while(!(idx > 0 && idx < targets.Count()));
+				} while(!(idx >= 0 && idx < targets.Count()));
 				target = targets[idx];
 			}
 

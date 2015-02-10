@@ -50,6 +50,7 @@
     <Compile Include="Engine\Description.cs" />
     <Compile Include="Engine\ExecutableItem.cs" />
     <Compile Include="Engine\StringExtensionMethod.cs" />
+    <Compile Include="Game\BlackBoard.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
