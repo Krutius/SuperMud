@@ -36,8 +36,7 @@ namespace SuperMud.Engine
 
 		private Player (AEnviroment enviroment, IUserInterface ui, Analyzer analyzer)
 		{
-			this.CommandAnalyzer = analyzer;// new SuperMud.Engine.CommandAnalyzer.Analyzer (this, Assembly.GetExecutingAssembly ());
-
+			this.CommandAnalyzer = analyzer;
 
 			this.Inventory = new List<IGameObject> ();
 			this.CurrentEnviroment = enviroment;
@@ -64,15 +63,6 @@ namespace SuperMud.Engine
 					message = this.UserInterface.AskUser ();
 				}
 			}
-		}
-
-		private List<IGameObject> GetCurrentTargets() {
-			List<IGameObject> currentGameObjects = new List<IGameObject> ();
-			currentGameObjects.Add (this);
-			currentGameObjects.Add (this.CurrentEnviroment);
-			currentGameObjects.AddRange (this.CurrentEnviroment.Things);
-			currentGameObjects.AddRange (this.Inventory);
-			return currentGameObjects;
 		}
 
 		private CommandAnalyzer.Analyzer CommandAnalyzer {
@@ -105,22 +95,6 @@ namespace SuperMud.Engine
 				matchings.ElementAt (idx).Execute (this);
 			}
 			return true;
-		}
-
-		private String cleanTarget (String input)
-		{
-			string start = (new String[] {
-				"der ",
-				"die ",
-				"das ",
-				"den "
-			}).FirstOrDefault (x => input.StartsWith (x, StringComparison.CurrentCultureIgnoreCase));
-
-			if (!String.IsNullOrEmpty (start)) {
-				return input.Substring (start.Length);
-			} else {
-				return input;
-			}
 		}
 
 		public static void Spawn (AEnviroment enviroment, IUserInterface ui, params Assembly[] assemblies)
