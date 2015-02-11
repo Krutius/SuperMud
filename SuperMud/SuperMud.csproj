@@ -40,7 +40,6 @@
     <Compile Include="Game\BasicRoom.cs" />
     <Compile Include="Game\BasicDoor.cs" />
     <Compile Include="Engine\GameActionAttribute.cs" />
-    <Compile Include="Engine\AItem.cs" />
     <Compile Include="Engine\GameNameAttribute.cs" />
     <Compile Include="Engine\IGameObject.cs" />
     <Compile Include="Engine\IGameObjectExtensionMethods.cs" />
@@ -48,13 +47,28 @@
     <Compile Include="Engine\GameIdentificationAttribute.cs" />
     <Compile Include="Engine\GramaticalGender.cs" />
     <Compile Include="Engine\Description.cs" />
-    <Compile Include="Engine\ExecutableItem.cs" />
     <Compile Include="Engine\StringExtensionMethod.cs" />
     <Compile Include="Game\BlackBoard.cs" />
+    <Compile Include="Game\BasicItem.cs" />
+    <Compile Include="Game\Stone.cs" />
+    <Compile Include="Game\Lion.cs" />
+    <Compile Include="Engine\CommandAnalyzer\Analyzer.cs" />
+    <Compile Include="Engine\CommandAnalyzer\CommandTarget.cs" />
+    <Compile Include="Engine\CommandAnalyzer\Command.cs" />
+    <Compile Include="Engine\CommandAnalyzer\GermanVerb.cs" />
+    <Compile Include="Engine\CommandAnalyzer\GermanVerbTwoParts.cs" />
+    <Compile Include="Engine\CommandAnalyzer\GermanVerbOnePart.cs" />
+    <Compile Include="Engine\CommandAnalyzer\ExecutableItem.cs" />
+    <Compile Include="Engine\CommandAnalyzer\GermanVerbTargetNoun.cs" />
+    <Compile Include="Engine\CommandAnalyzer\IGermanVerbTarget.cs" />
+    <Compile Include="Engine\CommandAnalyzer\TargetObjectMatching.cs" />
+    <Compile Include="Engine\CommandAnalyzer\GermanVerbTargetSelf.cs" />
+    <Compile Include="Engine\CommandAnalyzer\TargetObjectMethodMatching.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Engine\" />
     <Folder Include="Game\" />
+    <Folder Include="Engine\CommandAnalyzer\" />
   </ItemGroup>
 </Project>

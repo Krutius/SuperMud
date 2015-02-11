@@ -5,7 +5,7 @@ using SuperMud.Engine;
 
 namespace SuperMud.Engine
 {
-	[GameIdentificationAttribute("Umgebung")]
+	[GameName("Umgebung", GramaticalGender.Female)]
 	public abstract class AEnviroment : IGameObject
 	{
 		public List<IGameObject> Things {

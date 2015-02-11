@@ -15,6 +15,10 @@ namespace SuperMud.Game
 			var thirdRoom = new BasicRoom ("Der Raum ist stockdunkel. Es ist nichts zu sehen.");
 			BasicDoor.CreateDoor (secondRoom, thirdRoom, new Description("Tür", GramaticalGender.Female, "kleine"));
 
+			secondRoom.Things.Add (new Lion ());
+
+			startRoom.Things.Add (new Stone (new Description ("Stein", GramaticalGender.Male)));
+
 			return startRoom;
 		}
 	}

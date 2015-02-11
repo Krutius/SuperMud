@@ -12,7 +12,8 @@ namespace SuperMud.Engine
 				return ((INamed)obj).Description.FullText;
 			} else {
 				GameNameAttribute nameAttr = obj.GetType ().GetCustomAttributes (true)
-					.FirstOrDefault (a => a is GameNameAttribute) as GameNameAttribute;
+					.FirstOrDefault (a => a is
+						GameNameAttribute) as GameNameAttribute;
 
 				if(nameAttr != null) {
 					return nameAttr.Descripton.FullText;
@@ -21,6 +22,7 @@ namespace SuperMud.Engine
 				}
 			}
 		}
+
 
 		public static bool Identify (this IGameObject obj, Description what) 
 		{

@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
+using SuperMud.Engine.CommandAnalyzer;
 
 namespace SuperMud.Engine
 {
@@ -27,8 +29,17 @@ namespace SuperMud.Engine
 			}
 		}
 
-		private Player (AEnviroment enviroment, IUserInterface ui)
+		public List<IGameObject> Inventory {
+			get;
+			private set;
+		}
+
+		private Player (AEnviroment enviroment, IUserInterface ui, Analyzer analyzer)
 		{
+			this.CommandAnalyzer = analyzer;// new SuperMud.Engine.CommandAnalyzer.Analyzer (this, Assembly.GetExecutingAssembly ());
+
+
+			this.Inventory = new List<IGameObject> ();
 			this.CurrentEnviroment = enviroment;
 			this.UserInterface = ui;
 		}
@@ -60,101 +71,39 @@ namespace SuperMud.Engine
 			currentGameObjects.Add (this);
 			currentGameObjects.Add (this.CurrentEnviroment);
 			currentGameObjects.AddRange (this.CurrentEnviroment.Things);
+			currentGameObjects.AddRange (this.Inventory);
 			return currentGameObjects;
 		}
 
-		private List<ExecutableItem> ExecutableItems = new List<ExecutableItem>();
-		private void BuildCommandTargets() {
-			List<IGameObject> currentGameObjects = GetCurrentTargets ();
-
-			foreach (var obj in currentGameObjects) {
-				// nur wenn nicht im cache
-				if (this.ExecutableItems.All (x => x.Type != obj.GetType ())) {
-					foreach (var method in obj.GetType().GetMethods()) {
-						foreach (var attribute in method.GetCustomAttributes(typeof(GameActionAttribute), true).Cast<GameActionAttribute>()) {
-							var newExecutable = new ExecutableItem () {
-								Command = attribute.Command,
-								Method = method,
-								Type = obj.GetType ()
-							};
-
-							if (this.ExecutableItems.Any (x => x.Command == newExecutable.Command && x.Type == newExecutable.Type)) {
-								throw new Exception ("Das müsste schon im cache sein! Möglicherweise zwei methoden mit dem gleichen GameAction attribut auf " + obj.GetType ());
-							} else {
-								this.ExecutableItems.Add (newExecutable);
-							}
-						}
-					}
-				}
-			}
+		private CommandAnalyzer.Analyzer CommandAnalyzer {
+			get;
+			set;
 		}
 
-		private bool DoCommand (string command)
-		{
-			command = command.ReplaceSpecialSign();
-
-			this.BuildCommandTargets ();
-
-			var executables = this.ExecutableItems.Where (x => command.StartsWith (x.Command, StringComparison.CurrentCultureIgnoreCase));
-
-			var commandStrings = executables.Select (x => x.Command).Distinct ();
-			if (commandStrings.Count() > 1) {
-				throw new Exception (String.Join(", ", executables.Select (x => x.Command).Distinct ()) + " stehen im konflikt. unklar was gemeint ist mit " + command);
-			}
-
-			var commandVerb = commandStrings.FirstOrDefault ();
-			if (commandVerb == null) {
+		private bool DoCommand(String command) {
+			if (command.ToCharArray ().All (Char.IsLower)) {
 				return false;
 			}
 
-			var targetObjects = this.GetCurrentTargets().Where (obj => executables.Any (e => e.Type.IsInstanceOfType(obj))).ToList();
+			var matchings = this.CommandAnalyzer.FindMethodMatchings (command, this).OrderBy(m => m.ObjectMatching.Match);
 
-			String regex = @"^" + command.Substring(0, commandVerb.Length) + " .*?(?<article>die|das|den)(?<adjectives>.*?) (?<noun>[A-Z]{1}[a-z]*?)$";
-			var match = System.Text.RegularExpressions.Regex.Match (command, regex);
-
-			if (!match.Success) {
-
+			if (matchings == null || !matchings.Any ()) {
 				return false;
 			}
 
-			GramaticalGender g;
-			switch (match.Groups ["article"].Value) {
-				case "die":
-					g = GramaticalGender.Female;
-					break;
-				case "den":
-					g = GramaticalGender.Male;
-					break;
-				case "das":
-					g = GramaticalGender.Neuter;
-					break;
-				default:
-					throw new Exception ("Kein artikel im Satz gefunden?");
-			}
-
-			Description d = new Description (match.Groups ["noun"].Value, g, match.Groups ["adjectives"].Value.Split (new char[]{' '}, StringSplitOptions.RemoveEmptyEntries));
-
-
-			var targets = targetObjects.Where (o => o.Identify (d)).ToArray();
-
-			IGameObject target = null;
-			if (!targets.Any()) {
-				this.Inform ("Mit was soll ich das machen");
-				return false;
-			} else if (targets.Count() == 1) {
-				target = targets[0];
+			if (matchings.Count () == 1 && matchings.First ().ObjectMatching.Match > 5) {
+				matchings.First ().Execute (this);
+			} else if (matchings.Count (m => m.ObjectMatching.Match > matchings.First ().ObjectMatching.Match - 5) == 1) {
+				matchings.First ().Execute (this);
 			} else {
 				this.Inform ("Bitte auswählen:");
-				this.Inform(String.Join("\n", targetObjects.Select ((o, i) => String.Format ("[{0}] - {1}", i, o.GetIdentificationName ()))));
+				this.Inform (String.Join ("\n", matchings.Select ((o, i) => String.Format ("[{0}] - {1}", i, o.ObjectMatching.Description))));
 				int idx = 0;
 				do {
-					int.TryParse(this.Ask(), out idx);
-				} while(!(idx >= 0 && idx < targets.Count()));
-				target = targets[idx];
+					int.TryParse (this.Ask (), out idx);
+				} while(!(idx >= 0 && idx < matchings.Count ()));
+				matchings.ElementAt (idx).Execute (this);
 			}
-
-			executables.FirstOrDefault(x => x.Type.IsInstanceOfType(target)).Method.Invoke(target, new object[] { this });
-
 			return true;
 		}
 
@@ -174,9 +123,9 @@ namespace SuperMud.Engine
 			}
 		}
 
-		public static void Spawn (AEnviroment enviroment, IUserInterface ui)
+		public static void Spawn (AEnviroment enviroment, IUserInterface ui, params Assembly[] assemblies)
 		{
-			Player p = new Player (enviroment, ui);
+			Player p = new Player (enviroment, ui, new Analyzer(assemblies));
 			p.Spawn ();
 		}
 
@@ -188,6 +137,12 @@ namespace SuperMud.Engine
 		public String Ask ()
 		{
 			return this.UserInterface.AskUser ();
+		}
+
+		[GameAction("untersuche")]
+		public void Investigate(Player p) {
+			p.Inform ("Du hast folgende sachen dabei:");
+			p.Inform (String.Join("\n", this.Inventory.Select(x => x.GetIdentificationName())));
 		}
 	}
 }
