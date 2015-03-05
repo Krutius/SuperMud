@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using SuperMud.Engine;
 
 namespace SuperMud.Game
 {
 	[GameName("Löwen", GramaticalGender.Male)]
-	public class Lion : BasicItem
+	public class Lion : BasicMob
 	{
-		public Lion (): base(null) {}
-
+		protected override IEnumerable<IGameObject> Drops {
+			get {
+				yield return new Stone (new Description("Stein", GramaticalGender.Male, "grauer"));
+			}
+		}
 		public bool Gefangen {
 			get;
 			private set;

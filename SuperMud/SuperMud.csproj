@@ -64,6 +64,9 @@
     <Compile Include="Engine\CommandAnalyzer\TargetObjectMatching.cs" />
     <Compile Include="Engine\CommandAnalyzer\GermanVerbTargetSelf.cs" />
     <Compile Include="Engine\CommandAnalyzer\TargetObjectMethodMatching.cs" />
+    <Compile Include="Game\BasicMob.cs" />
+    <Compile Include="Engine\IEnviromentHolding.cs" />
+    <Compile Include="Game\BottleOfWater.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
